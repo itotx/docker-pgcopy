@@ -1,0 +1,39 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: docker-pgcopy
+spec:
+  # Copy database test1 to test2 every day at 2AM
+  schedule: "0 2 * * *"
+  successfulJobsHistoryLimit: 0
+  failedJobsHistoryLimit: 1
+  revisionHistoryLimit: 1  
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: docker-pgcopy
+            image: docker.pkg.github.com/itotx/docker-pgcopy:1.0.0
+            env:
+            - name: PG_FROM_HOST
+              value: "127.0.0.1"
+            - name: PG_FROM_PORT
+              value: "5432"
+            - name: PG_FROM_DB
+              value: "test1"
+            - name: PG_FROM_USER
+              value: "postgres"
+            - name: PG_FROM_PASS
+              value: "postgres"
+            - name: PG_TO_HOST
+              value: "127.0.0.1"
+            - name: PG_TO_PORT
+              value: "5432"
+            - name: PG_TO_DB
+              value: "test2"
+            - name: PG_TO_USER
+              value: "postgres"
+            - name: PG_TO_PASS
+              value: "postgres"
+          restartPolicy: Never       
